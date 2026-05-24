@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcane Translator</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --text: #c9d1d9;
+            --accent: #58a6ff;
+            --border: #30363d;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: var(--card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #0d1117;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px;
+            border-radius: 6px;
+            resize: none;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--border);
+            color: var(--text);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: var(--accent);
+            color: #0d1117;
+        }
+        .output-area {
+            position: relative;
+        }
+        #copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: auto;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⨀⨑⨂⨀⨎⨈ ⨓⨑⨀⨎⨒</h1>
+    
+    <textarea id="input" placeholder="Type english or paste arcane symbols..."></textarea>
+    
+    <div class="controls">
+        <button onclick="process('encode')">English → Arcane</button>
+        <button onclick="process('decode')">Arcane → English</button>
+    </div>
+
+    <div class="output-area">
+        <textarea id="output" readonly placeholder="Result will appear here..."></textarea>
+        <button id="copy-btn" onclick="copyText()">Copy</button>
+    </div>
+</div>
+
+<script>
+    // Generate maps
+    const baseUnicode = 0x2A00;
+    const encodeMap = {};
+    const decodeMap = {};
+
+    for (let i = 0; i < 26; i++) {
+        const char = String.fromCharCode(97 + i); // a-z
+        const symbol = String.fromCharCode(baseUnicode + i);
+        encodeMap[char] = symbol;
+        decodeMap[symbol] = char;
+    }
+
+    function translate(text, mode) {
+        return text.toLowerCase().split('').map(char => {
+            if (mode === 'encode') {
+                return encodeMap[char] || char;
+            } else {
+                return decodeMap[char] || char;
+            }
+        }).join('');
+    }
+
+    function process(mode) {
+        const input = document.getElementById('input').value;
+        const output = translate(input, mode);
+        document.getElementById('output').value = output;
+    }
+
+    function copyText() {
+        const output = document.getElementById('output');
+        output.select();
+        document.execCommand('copy');
+        
+        const btn = document.getElementById('copy-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "Copied!";
+        setTimeout(() => btn.innerText = originalText, 1500);
+    }
+</script>
+
+</body>
+</html>
